@@ -1,135 +1,207 @@
-# miyabi_telegram_app
+# Telegram WebApp Tic-Tac-Toe
 
-Autonomous development powered by **Miyabi** - AI-driven development framework.
+A real-time multiplayer Tic-Tac-Toe game built specifically for Telegram WebApp with TypeScript, Socket.IO, and SQLite.
 
-## Getting Started
+## Features
 
-### Prerequisites
+- 🎮 **Real-time Multiplayer**: Play against other users in real-time using Socket.IO
+- 🔐 **Telegram Integration**: Secure authentication using Telegram WebApp SDK
+- 🏆 **Player Statistics**: Track wins, losses, draws, and total games
+- 🎯 **Room System**: Create private rooms or use random matchmaking
+- 🔄 **Rematch System**: Request rematches after games end
+- 👥 **Spectator Mode**: Watch ongoing games as a spectator
+- 📱 **Mobile Optimized**: Responsive design optimized for mobile devices
+- 🎨 **Telegram Themes**: Automatically adapts to Telegram's theme colors
 
+## Technology Stack
+
+- **Backend**: Node.js, TypeScript, Express, Socket.IO
+- **Database**: SQLite with custom database manager
+- **Frontend**: Vanilla TypeScript, Telegram WebApp SDK
+- **Testing**: Jest with 80%+ test coverage
+- **Development**: ESLint, TypeScript strict mode
+
+## Installation
+
+1. Clone the repository:
 ```bash
-# Set environment variables
-cp .env.example .env
-# Edit .env and add your tokens
+git clone <repository-url>
+cd telegram-tictactoe
 ```
 
-### Installation
-
+2. Install dependencies:
 ```bash
 npm install
 ```
 
-### Development
-
+3. Set environment variables:
 ```bash
-npm run dev          # Run development server
-npm run build        # Build project
-npm test             # Run tests
-npm run typecheck    # Check types
-npm run lint         # Lint code
+export BOT_TOKEN="your_telegram_bot_token"
+export PORT="3000"
+export DB_PATH="./game.db"
 ```
 
-## Project Structure
-
-```
-miyabi_telegram_app/
-├── src/              # Source code
-│   └── index.ts     # Entry point
-├── tests/           # Test files
-│   └── example.test.ts
-├── .claude/         # AI agent configuration
-│   ├── agents/      # Agent definitions
-│   └── commands/    # Custom commands
-├── .github/
-│   ├── workflows/   # CI/CD automation
-│   └── labels.yml   # Label system (53 labels)
-├── CLAUDE.md        # AI context file
-└── package.json
-```
-
-## Miyabi Framework
-
-This project uses **7 autonomous AI agents**:
-
-1. **CoordinatorAgent** - Task planning & orchestration
-2. **IssueAgent** - Automatic issue analysis & labeling
-3. **CodeGenAgent** - AI-powered code generation
-4. **ReviewAgent** - Code quality validation (80+ score)
-5. **PRAgent** - Automatic PR creation
-6. **DeploymentAgent** - CI/CD deployment automation
-7. **TestAgent** - Test execution & coverage
-
-### Workflow
-
-1. **Create Issue**: Describe what you want to build
-2. **Agents Work**: AI agents analyze, implement, test
-3. **Review PR**: Check generated pull request
-4. **Merge**: Automatic deployment
-
-### Label System
-
-Issues transition through states automatically:
-
-- `📥 state:pending` - Waiting for agent assignment
-- `🔍 state:analyzing` - Being analyzed
-- `🏗️ state:implementing` - Code being written
-- `👀 state:reviewing` - Under review
-- `✅ state:done` - Completed & merged
-
-## Commands
-
+4. Build the application:
 ```bash
-# Check project status
-npx miyabi status
-
-# Watch for changes (real-time)
-npx miyabi status --watch
-
-# Create new issue
-gh issue create --title "Add feature" --body "Description"
+npm run build
 ```
 
-## Configuration
+5. Start the server:
+```bash
+npm start
+```
 
-### Environment Variables
+For development:
+```bash
+npm run dev
+```
 
-Required variables (see `.env.example`):
+## Testing
 
-- `GITHUB_TOKEN` - GitHub personal access token
-- `ANTHROPIC_API_KEY` - Claude API key (optional for local development)
-- `REPOSITORY` - Format: `owner/repo`
+Run tests with coverage:
+```bash
+npm run test:coverage
+```
 
-### GitHub Actions
+Run tests in watch mode:
+```bash
+npm test
+```
 
-Workflows are pre-configured in `.github/workflows/`:
+## API Endpoints
 
-- CI/CD pipeline
-- Automated testing
-- Deployment automation
-- Agent execution triggers
+- `GET /health` - Health check endpoint
+- `GET /api/stats/:telegramId` - Get player statistics
+- `GET /` - Serve the game client
 
-**Note**: Set repository secrets at:
-`https://github.com/dokyon/miyabi_telegram_app/settings/secrets/actions`
+## Socket.IO Events
 
-Required secrets:
-- `GITHUB_TOKEN` (auto-provided by GitHub Actions)
-- `ANTHROPIC_API_KEY` (add manually for agent execution)
+### Client to Server
+- `create-room` - Create a new game room
+- `join-room` - Join an existing room by ID
+- `find-match` - Find a random opponent
+- `make-move` - Make a move on the game board
+- `request-rematch` - Request a rematch
+- `accept-rematch` - Accept a rematch request
+- `decline-rematch` - Decline a rematch request
+- `leave-room` - Leave the current room
 
-## Documentation
+### Server to Client
+- `room-created` - Room creation confirmation
+- `room-joined` - Successfully joined a room
+- `match-found` - Matched with an opponent
+- `game-updated` - Game state changed
+- `move-made` - A move was made
+- `game-ended` - Game finished with results
+- `rematch-requested` - Opponent requested rematch
+- `rematch-accepted` - Rematch was accepted
+- `rematch-declined` - Rematch was declined
+- `player-left` - Opponent left the game
+- `error` - Error message
 
-- **Miyabi Framework**: https://github.com/ShunsukeHayashi/Miyabi
-- **NPM Package**: https://www.npmjs.com/package/miyabi
-- **Label System**: See `.github/labels.yml`
-- **Agent Operations**: See `CLAUDE.md`
+## Database Schema
 
-## Support
+### Players Table
+```sql
+CREATE TABLE players (
+    telegram_id INTEGER PRIMARY KEY,
+    username TEXT NOT NULL,
+    wins INTEGER DEFAULT 0,
+    losses INTEGER DEFAULT 0,
+    draws INTEGER DEFAULT 0,
+    total_games INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
 
-- **Issues**: https://github.com/ShunsukeHayashi/Miyabi/issues
-- **Discord**: [Coming soon]
+### Games Table
+```sql
+CREATE TABLE games (
+    id TEXT PRIMARY KEY,
+    player1_id INTEGER NOT NULL,
+    player2_id INTEGER NOT NULL,
+    board TEXT NOT NULL,
+    current_player TEXT NOT NULL,
+    status TEXT NOT NULL,
+    result TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (player1_id) REFERENCES players (telegram_id),
+    FOREIGN KEY (player2_id) REFERENCES players (telegram_id)
+);
+```
+
+## Game Rules
+
+1. **Objective**: Get three of your symbols (X or O) in a row, column, or diagonal
+2. **Turns**: Players alternate turns, with X always starting first
+3. **Winning**: First player to get three in a row wins
+4. **Draw**: If all 9 squares are filled with no winner, the game is a draw
+5. **Rematch**: Players can request rematches, with symbols switching each game
+
+## Development
+
+### Project Structure
+```
+src/
+├── auth/           # Telegram authentication
+├── database/       # Database management
+├── game/           # Game logic and management
+├── types/          # TypeScript type definitions
+└── server.ts       # Main server file
+public/
+├── index.html      # Game client HTML
+└── app.js          # Game client JavaScript
+```
+
+### Code Quality
+
+- **TypeScript Strict Mode**: All code uses strict TypeScript
+- **ESLint**: Zero warnings policy
+- **Test Coverage**: 80%+ test coverage required
+- **Type Safety**: Complete type annotations
+- **Error Handling**: Comprehensive error handling
+
+### Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Write tests for new functionality
+4. Ensure all tests pass and coverage is maintained
+5. Run ESLint and fix any warnings
+6. Submit a pull request
+
+## Telegram Bot Setup
+
+1. Create a new bot with [@BotFather](https://t.me/botfather)
+2. Get your bot token
+3. Set up a WebApp with your bot:
+   ```
+   /newapp
+   @your_bot_username
+   App Name
+   Description
+   Photo
+   https://your-domain.com
+   ```
+4. Configure the bot token in your environment variables
+
+## Deployment
+
+The application can be deployed to any Node.js hosting platform:
+
+1. **Heroku**: Use the provided `package.json` scripts
+2. **Railway**: Connect your GitHub repository
+3. **DigitalOcean App Platform**: Deploy directly from GitHub
+4. **VPS**: Use PM2 or similar process manager
+
+Make sure to set the required environment variables in your deployment platform.
 
 ## License
 
-MIT
+MIT License - see LICENSE file for details.
 
----
+## Support
 
-✨ Generated by [Miyabi](https://github.com/ShunsukeHayashi/Miyabi)
+For questions or issues, please open a GitHub issue or contact the development team.
