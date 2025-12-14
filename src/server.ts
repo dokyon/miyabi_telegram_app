@@ -7,10 +7,10 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import path from 'path';
-import { TelegramAuth } from './auth/telegramAuth';
-import { DatabaseManager } from './database/database';
-import { GameManager } from './game/gameManager';
-import { SocketEvents, TelegramUser } from './types';
+import { TelegramAuth } from './auth/telegramAuth.js';
+import { DatabaseManager } from './database/database.js';
+import { GameManager } from './game/gameManager.js';
+import { SocketEvents, TelegramUser, PlayerStats } from './types/index.js';
 
 const app = express();
 const server = createServer(app);
@@ -168,12 +168,12 @@ io.on('connection', (socket) => {
         // If game ended, send stats
         if (result.room.game.status === 'finished') {
           const stats = await Promise.all(
-            result.room.game.players.map(p => 
+            result.room.game.players.map(p =>
               database.getPlayerStats(p.telegramId)
             )
           );
-          
-          io.to(result.room.id).emit('game-ended', result.room.game, stats.filter(Boolean));
+
+          io.to(result.room.id).emit('game-ended', result.room.game, stats.filter((s): s is PlayerStats => s !== null));
         }
       } else {
         socket.emit('error', result.error || 'Invalid move');
