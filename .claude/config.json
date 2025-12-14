@@ -1,0 +1,38 @@
+{
+  "project": {
+    "name": "miyabi_telegram_app",
+    "version": "0.1.0",
+    "description": "Telegram Mini App: オンライン対戦○×ゲーム (Tic-Tac-Toe Online)",
+    "author": "dokyon",
+    "created": "2025-12-13"
+  },
+  "settings": {
+    "auto_backup": true,
+    "backup_extensions": [".md", ".yaml", ".json", ".html", ".css"],
+    "log_level": "info",
+    "security": {
+      "block_dangerous_commands": true,
+      "dangerous_patterns": ["rm -rf", "sudo", "dd if=", "> /dev/"]
+    }
+  },
+  "tools": {
+    "github": {
+      "enabled": true,
+      "repository": "dokyon/miyabi_telegram_app"
+    }
+  },
+  "hooks": {
+    "enabled": true,
+    "session_start": true,
+    "session_end": true,
+    "pre_tool_use": true,
+    "post_tool_use": true,
+    "user_prompt_submit": true,
+    "notification": true,
+    "stop": true,
+    "subagent_stop": true,
+    "pre_compact": true,
+    "before_edit": true,
+    "after_write": true
+  }
+}
