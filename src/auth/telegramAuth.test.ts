@@ -112,9 +112,9 @@ describe('TelegramAuth', () => {
 
     it('should handle malformed init data', () => {
       const result = telegramAuth.validateInitData('invalid_init_data');
-      
+
       expect(result.valid).toBe(false);
-      expect(result.error).toBe('Failed to validate init data');
+      expect(result.error).toBe('No hash provided');
     });
   });
 
