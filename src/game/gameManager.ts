@@ -2,9 +2,9 @@
  * Game manager for handling rooms and matches
  */
 
-import { GameRoom, GameState, Player, TelegramUser } from '../types';
-import { GameLogic } from './gameLogic';
-import { DatabaseManager } from '../database/database';
+import { GameRoom, GameState, Player, TelegramUser } from '../types/index.js';
+import { GameLogic } from './gameLogic.js';
+import { DatabaseManager } from '../database/database.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export class GameManager {

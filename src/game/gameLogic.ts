@@ -2,7 +2,7 @@
  * Tic-Tac-Toe game logic implementation
  */
 
-import { GameBoard, CellValue, GameResult, GameState, Player } from '../types';
+import { GameBoard, CellValue, GameResult, GameState, Player } from '../types/index.js';
 import { v4 as uuidv4 } from 'uuid';
 
 export class GameLogic {

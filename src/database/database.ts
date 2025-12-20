@@ -3,7 +3,7 @@
  */
 
 import sqlite3 from 'sqlite3';
-import { PlayerStats, GameState, DatabaseSchema } from '../types';
+import { PlayerStats, GameState, DatabaseSchema } from '../types/index.js';
 
 export class DatabaseManager {
   private db: sqlite3.Database;
