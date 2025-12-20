@@ -3,7 +3,7 @@
  */
 
 import crypto from 'crypto';
-import { TelegramWebAppInitData, TelegramUser } from '../types';
+import { TelegramWebAppInitData, TelegramUser } from '../types/index.js';
 
 export class TelegramAuth {
   private botToken: string;

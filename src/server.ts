@@ -7,10 +7,16 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
 import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import { TelegramAuth } from './auth/telegramAuth.js';
 import { DatabaseManager } from './database/database.js';
 import { GameManager } from './game/gameManager.js';
 import { SocketEvents, TelegramUser, PlayerStats } from './types/index.js';
+
+// ES Modules compatibility
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 const server = createServer(app);
